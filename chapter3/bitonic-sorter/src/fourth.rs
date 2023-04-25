@@ -1,5 +1,3 @@
-use crate::second;
-
 use super::SortOrder;
 use rayon;
 use std::cmp::Ordering;
