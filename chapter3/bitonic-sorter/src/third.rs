@@ -71,6 +71,7 @@ mod tests {
     use std::vec;
 
     use super::{sort, sort_by};
+    use crate::utils::{is_sorted_ascending, is_sorted_descending, new_u32_vec};
     use crate::SortOrder::*;
 
     #[derive(Debug, PartialEq)]
@@ -142,6 +143,24 @@ mod tests {
         assert_eq!(sort(&mut x, &Descending), Ok(()));
 
         assert_eq!(x, vec![330, 110, 30, 21, 20, 11, 10, 4]);
+    }
+
+    #[test]
+    fn sort_u32_large() {
+        {
+            // 65536 = 2^16
+            let mut x = new_u32_vec(65536);
+            assert_eq!(sort(&mut x, &Ascending), Ok(()));
+            // ソート結果が正しいことをテスト
+            assert!(is_sorted_ascending(&x));
+        }
+        {
+            // 65536 = 2^16
+            let mut x = new_u32_vec(65536);
+            assert_eq!(sort(&mut x, &Descending), Ok(()));
+            // ソート結果が正しいことをテスト
+            assert!(is_sorted_descending(&x));
+        }
     }
 
     #[test]
