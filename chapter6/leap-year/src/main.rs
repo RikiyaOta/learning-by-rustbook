@@ -1,6 +1,19 @@
 use std::io::{self, Read};
 use std::io::Write;
 
+struct Circle {
+    radius: u32
+}
+
+impl Circle {
+    fn diameter(&self) -> u32 {
+        self.radius * 2    
+    }
+    
+    fn small_circle() -> Circle {
+        Circle { radius: 1 }
+    }
+}
 
 fn main() {
     let mut year = String::new();
@@ -16,8 +29,12 @@ fn main() {
     } else {
         println!("{} is not a leap year!", year);
     }
-
-    println!("Hello, world!");
+    
+    let circle1 = Circle { radius: 10};
+    println!("Circle1's diameter: {}", circle1.diameter());
+    
+    let circle2 = Circle::small_circle();
+    println!("Circle2's diameter: {}", circle2.diameter());
 }
 
 fn is_leap_year(year: u32) -> bool {
