@@ -54,7 +54,18 @@ impl<T: Default> ToyVec<T> {
         }
     }
 
-    fn grow(&mut self) {}
+    fn grow(&mut self) {
+        if self.capacity() == 0 {
+            self.elements = Self::allocate_in_heap(1);
+        } else {
+            let new_elements = Self::allocate_in_heap(self.capacity() * 2);
+            let old_elements = std::mem::replace(&mut self.elements, new_elements);
+
+            for (i, elem) in old_elements.into_vec().into_iter().enumerate() {
+                self.elements[i] = elem;
+            }
+        }
+    }
 
     pub fn pop(&mut self) -> Option<T> {
         if self.len == 0 {
