@@ -29,4 +29,25 @@ impl<T: Default> ToyVec<T> {
     pub fn capacity(&self) -> usize {
         self.elements.len()
     }
+    
+    pub fn push(&mut self, element: T) {
+        if self.len == self.capacity() {
+            self.grow();
+        }
+        
+        self.elements[self.len] = element;
+        self.len += 1;
+    }
+    
+    pub fn get(&self, index: usize) -> Option<&T> {
+        if index < self.len {
+            Some(&self.elements[index])
+        } else {
+           None 
+        }
+    }
+    
+    fn grow(&mut self) {
+        
+    }
 }
