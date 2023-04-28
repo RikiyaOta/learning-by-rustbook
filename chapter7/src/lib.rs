@@ -55,4 +55,15 @@ impl<T: Default> ToyVec<T> {
     }
 
     fn grow(&mut self) {}
+
+    pub fn pop(&mut self) -> Option<T> {
+        if self.len == 0 {
+            None
+        } else {
+            self.len -= 1;
+            //let elem = self.elements[self.len];
+            let elem = std::mem::replace(&mut self.elements[self.len], Default::default());
+            Some(elem)
+        }
+    }
 }
