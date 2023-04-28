@@ -21,33 +21,38 @@ impl<T: Default> ToyVec<T> {
             .collect::<Vec<_>>()
             .into_boxed_slice()
     }
-    
+
     pub fn len(&self) -> usize {
         self.len
     }
-    
+
     pub fn capacity(&self) -> usize {
         self.elements.len()
     }
-    
+
     pub fn push(&mut self, element: T) {
         if self.len == self.capacity() {
             self.grow();
         }
-        
+
         self.elements[self.len] = element;
         self.len += 1;
     }
-    
+
     pub fn get(&self, index: usize) -> Option<&T> {
         if index < self.len {
             Some(&self.elements[index])
         } else {
-           None 
+            None
         }
     }
-    
-    fn grow(&mut self) {
-        
+
+    pub fn get_or<'a>(&'a self, index: usize, default: &'a T) -> &'a T {
+        match self.get(index) {
+            Some(v) => v,
+            None => default,
+        }
     }
+
+    fn grow(&mut self) {}
 }
