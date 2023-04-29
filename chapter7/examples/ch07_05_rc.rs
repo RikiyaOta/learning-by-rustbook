@@ -48,7 +48,7 @@ fn main() {
         rc1,
         weak
     );
-    
+
     // Weak を Rc にアップグレードすると Child にアクセスできる。
     if let Some(rc3) = weak.upgrade() {
         println!(
@@ -58,7 +58,7 @@ fn main() {
             rc3,
         );
     }
-    
+
     // rc1 をドロップする（スコープを抜けたのと同じ）
     // 3章カウントが０になり、Child は破棄される。
     std::mem::drop(rc1);
