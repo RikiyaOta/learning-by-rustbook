@@ -27,4 +27,18 @@ fn main() {
     apply_fn_mut(&mut lookup, 'o');
     apply_fn_once(lookup, 'y');
     assert_eq!(s1, "read-only");
+
+    let mut s2 = "append".to_string();
+    // ↓このクロージャーは FnMut, FnOnceを実装するはず。
+    let mut modify = |ch| {
+        s2.push(ch);
+        true
+    };
+
+    // Fn トレイトを実装していないのでコンパイルエラーになる。
+    // apply_fn(&modify, 'e');
+
+    apply_fn_mut(&mut modify, 'e');
+    apply_fn_once(modify, 'd');
+    assert_eq!(s2, "appended");
 }
