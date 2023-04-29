@@ -14,7 +14,7 @@ fn main() {
 
     // この時は、iter が解放されてるので可変参照を取得できる。
     v.push("Canary".to_string());
-    
+
     for msg in &v {
         println!("{}", msg);
     }

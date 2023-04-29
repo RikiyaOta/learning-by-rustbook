@@ -111,10 +111,10 @@ impl<'vec, T> Iterator for Iter<'vec, T> {
 impl<'vec, T: Default> IntoIterator for &'vec ToyVec<T> {
     type Item = &'vec T;
     type IntoIter = Iter<'vec, T>;
-    
+
     // 注意：&ToyVec<T> に対するトレイト実装なので、
     // self の型は &ToyVec<T> である。
     fn into_iter(self) -> Self::IntoIter {
-       self.iter() 
+        self.iter()
     }
 }
