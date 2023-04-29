@@ -23,7 +23,7 @@ fn main() {
         rb.borrow_mut().insert("ネザーランド・ドワーフ");
     });
 
-    std::thread::spawn(|| 
+    std::thread::spawn(||
        // 別スレッドで insert する
         RABBITS.with(|rb| rb.borrow_mut().insert("ドワーフホト")
     ))
