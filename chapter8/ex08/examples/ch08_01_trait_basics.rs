@@ -1,10 +1,12 @@
 use std::f32::consts::PI;
 
+#[derive(Debug)]
 struct CartesianCoord {
     x: f64,
     y: f64,
 }
 
+#[derive(Debug)]
 struct PolarCoord {
     r: f64,
     theta: f64,
@@ -56,6 +58,28 @@ impl Coordinates for PolarCoord {
     }
 }
 
+// へ〜。struct で定義した自分の型だけじゃなくって、
+// 既存の型にも trait を実装できるんだ。
+impl Coordinates for (f64, f64) {
+    fn to_cartesian(self) -> CartesianCoord {
+        CartesianCoord {
+            x: self.0,
+            y: self.1,
+        }
+    }
+
+    fn from_cartesian(cart: CartesianCoord) -> Self {
+        (cart.x, cart.y)
+    }
+}
+
 fn main() {
-    println!("Hello!");
+    // (f64, f64)に実装したメソッドを使ってみる。
+    let point = (1.0, 1.0);
+    let c = point.to_cartesian();
+
+    println!("c: {:?}", c);
+
+    let p = PolarCoord::from_cartesian(c);
+    println!("p: {:?}", p);
 }
