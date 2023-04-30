@@ -1,4 +1,4 @@
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 #[derive(Debug)]
 struct CartesianCoord {
@@ -43,11 +43,7 @@ impl Coordinates for PolarCoord {
         if cart.x < 1e-10 {
             PolarCoord {
                 r: cart.y.abs(),
-                theta: if cart.y >= 0.0 {
-                    (PI / 2.0).into()
-                } else {
-                    (-PI / 2.0).into()
-                },
+                theta: if cart.y >= 0.0 { PI / 2.0 } else { -PI / 2.0 },
             }
         } else {
             PolarCoord {
@@ -73,6 +69,52 @@ impl Coordinates for (f64, f64) {
     }
 }
 
+// Pattern1
+fn print_point<P: Coordinates>(point: P) {
+    let p = point.to_cartesian();
+    println!("({}, {})", p.x, p.y);
+}
+
+//// Pattern2
+//fn print_point2<P>(point: P) where P: Coordinates {
+//    let p = point.to_cartesian();
+//    println!("({}, {})", p.x, p.y);
+//}
+//
+//// Pattern3
+//fn print_point3(point: impl Coordinates) {
+//    let p = point.to_cartesian();
+//    println!("({}, {})", p.x, p.y);
+//}
+
+// 複数の　trait boundary をつけることも可能
+fn as_cartesian<P: Coordinates + Clone>(point: &P) -> CartesianCoord {
+    point.clone().to_cartesian()
+}
+
+// もうちょっと複雑なトレイト境界になると、冗長な where 記法を使わないといけない。
+// むしろ、これくらい柔軟にかけるのがすごい。
+fn make_point<T>(x: T, y: T) -> CartesianCoord
+where
+    (T, T): Coordinates,
+{
+    (x, y).to_cartesian()
+}
+
+trait ConvertTo<Output> {
+    fn convert(&self) -> Output;
+}
+
+// なるほど。
+// built in type に対してもトレイト境界を設定することで、トレイトを実装していることを要請できるのか。
+// わざわざ struct とか書かなくてもいいのは柔軟性がある気がする。
+fn to<T>(i: i32) -> T
+where
+    i32: ConvertTo<T>,
+{
+    i.convert()
+}
+
 fn main() {
     // (f64, f64)に実装したメソッドを使ってみる。
     let point = (1.0, 1.0);
@@ -82,4 +124,13 @@ fn main() {
 
     let p = PolarCoord::from_cartesian(c);
     println!("p: {:?}", p);
+
+    // Coordinates trait を実装しているのでコンパイルとおる。
+    print_point((0.0, 1.0));
+    print_point(PolarCoord {
+        r: 1.0,
+        theta: PI / 2.0,
+    });
+
+    // print_point("string"); // &str は通らない。Coordinates を実装してないから。
 }
