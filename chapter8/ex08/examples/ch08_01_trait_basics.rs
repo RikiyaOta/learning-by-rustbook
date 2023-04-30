@@ -115,6 +115,70 @@ where
     i.convert()
 }
 
+// 2 x 2 行列
+// 注意：タプル構造体で定義している。
+struct Matrix([[f64; 2]; 2]);
+
+trait LinearTransform: Coordinates {
+    // 一般の線形変換をデフォルト実装として提供することができた！
+    fn transform(self, matrix: &Matrix) -> Self
+    where
+        Self: Sized,
+    {
+        // デフォルト実装では、Coordinates のメソッドが使える。
+        let mut cart = self.to_cartesian();
+        let CartesianCoord { x, y } = cart;
+        let m = matrix.0;
+
+        cart.x = m[0][0] * x + m[0][1] * y;
+        cart.y = m[1][0] * x + m[1][1] * y;
+        Self::from_cartesian(cart)
+    }
+
+    // デフォルト実装を用意する
+    // transform を使うので、デフォルト実装ができる
+    //
+    // Sized trait をトレイト境界で使っている。Self をそのまま返すので、値のサイズがわかっている必要があるらしい（？）→あとで出てくるとのこと。
+    fn rotate(self, theta: f64) -> Self
+    where
+        Self: Sized,
+    {
+        self.transform(&Matrix([
+            [theta.cos(), -theta.sin()],
+            [theta.sin(), theta.cos()],
+        ]))
+    }
+}
+
+// CartesianCoord は、LinearTransform trait が継承している Coordinates trait を実装している。
+// よって、LinearTransform trait を実装することができる。
+impl LinearTransform for CartesianCoord {
+    fn transform(self, matrix: &Matrix) -> Self {
+        let Self { x, y } = self;
+        let m = matrix.0;
+
+        Self {
+            x: m[0][0] * x + m[0][1] * y,
+            y: m[1][0] * x + m[1][1] * y,
+        }
+    }
+}
+
+impl LinearTransform for PolarCoord {
+    fn transform(self, _matrix: &Matrix) -> Self {
+        unimplemented!()
+    }
+
+    // PolarCoord の rotate は theta を修正するだけ。
+    // 普通に実装するだけでデフォルト実装を上書きすることができる。
+    fn rotate(self, theta: f64) -> Self {
+        Self {
+            r: self.r,
+            theta: self.theta + theta,
+        }
+    }
+}
+
 fn main() {
     // (f64, f64)に実装したメソッドを使ってみる。
     let point = (1.0, 1.0);
@@ -133,4 +197,8 @@ fn main() {
     });
 
     // print_point("string"); // &str は通らない。Coordinates を実装してないから。
+
+    let p = (1.0, 0.0).to_cartesian();
+    // rotate の実装を CartesianCoord に与えていないけど、デフォルト実装があるのでそのまま使える。
+    print_point(p.rotate(PI));
 }
